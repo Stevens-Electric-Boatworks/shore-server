@@ -15,7 +15,8 @@ datasource db {
 }
 
 model DataReading {
-    id                   Int    @id @default(autoincrement())
+    id                   Int      @id @default(autoincrement())
+    timestamp            DateTime
     vbat                 Float?
     vebat                Float?
     temp_bat             Float?
