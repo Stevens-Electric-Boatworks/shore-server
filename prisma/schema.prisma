@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider = "prisma-client-js"
+    output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model DataReading {
+    id                   Int    @id @default(autoincrement())
+    vbat                 Float?
+    vebat                Float?
+    temp_bat             Float?
+    current_bat          Int?
+    coolant_temp         Float?
+    rpm_a                Int?
+    rpm_b                Int?
+    motor_synch          Float?
+    speed                Int?
+    heading              Int?
+    gps_lat              Float?
+    gps_lon              Float?
+    gps_alt              Float?
+    imu_x                Float?
+    imu_y                Float?
+    imu_z                Float?
+    propulsion_angle     Float?
+    bms_temp             Float?
+    bat_comp_temp        Float?
+    throttle             Int?
+    battery_percent      Int?
+    can_bus_util_percent Int?
+}
+
+enum AlarmType {
+    ERROR
+    WARNING
+}
+
+model Alarm {
+    timestamp DateTime
+    id        Int
+    type      AlarmType?
+    message   String?
+
+    @@unique([id, timestamp])
+}
