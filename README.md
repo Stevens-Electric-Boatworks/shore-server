@@ -36,7 +36,7 @@ git clone https://github.com/Dakdot/eboat-server.git
 2. Install `npm` packages:
 
 ```
-node -v
+npm i
 ```
 
 3. Generate Prisma sources:
