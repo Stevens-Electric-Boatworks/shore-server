@@ -38,20 +38,22 @@ type DataReading = {
 
 let buffer: DataReading[] = [];
 
-setInterval(async () => {
-  if (buffer.length <= 0) return;
+// Temporarily disable database writes
 
-  try {
-    console.log("Uploading to DB...");
-    const res = await db.dataReading.createMany({
-      data: buffer,
-    });
+// setInterval(async () => {
+//   if (buffer.length <= 0) return;
 
-    buffer = [];
-  } catch (err) {
-    console.error("Failed to upload data to database:", err);
-  }
-}, 3000);
+//   try {
+//     console.log("Uploading to DB...");
+//     const res = await db.dataReading.createMany({
+//       data: buffer,
+//     });
+
+//     buffer = [];
+//   } catch (err) {
+//     console.error("Failed to upload data to database:", err);
+//   }
+// }, 3000);
 
 wss.on("connection", (ws) => {
   const id = randomUUID();
@@ -81,7 +83,11 @@ wss.on("connection", (ws) => {
         return;
       }
 
-      if (parsed.type === "data" || parsed.type === "alarm") {
+      if (
+        parsed.type === "data" ||
+        parsed.type === "alarm" ||
+        parsed.type === "log"
+      ) {
         for (const [id, ws] of clients) {
           ws.send(
             JSON.stringify({
@@ -90,12 +96,12 @@ wss.on("connection", (ws) => {
           );
         }
 
-        if (parsed.type === "data") {
-          buffer.push({
-            ...parsed.payload,
-            timestamp: new Date(),
-          });
-        }
+        // if (parsed.type === "data") {
+        //   buffer.push({
+        //     ...parsed.payload,
+        //     timestamp: new Date(),
+        //   });
+        // }
       }
     } catch (err) {
       // console.error(err);
