@@ -22,20 +22,3 @@ export function errorHandler(
     stack: process.env.NODE_ENV === "production" ? "🥞" : err.stack,
   });
 }
-
-export async function authorize(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer "))
-    return res
-      .status(401)
-      .json({ error: "Authorization header missing or invalid." });
-
-  const accessToken = authHeader.split(" ")[1];
-
-  next();
-}
