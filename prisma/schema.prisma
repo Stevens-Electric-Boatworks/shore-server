@@ -46,6 +46,8 @@ enum AlarmType {
     WARNING
 }
 
+//TODO: Include CAN BUS State
+
 model Alarm {
     timestamp DateTime
     id        Int
