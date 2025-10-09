@@ -86,7 +86,8 @@ wss.on("connection", (ws) => {
       if (
         parsed.type === "data" ||
         parsed.type === "alarm" ||
-        parsed.type === "log"
+        parsed.type === "log" ||
+        parsed.type === "can_bus"
       ) {
         for (const [id, ws] of clients) {
           ws.send(
