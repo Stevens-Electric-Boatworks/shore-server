@@ -5,6 +5,8 @@ import PingHandler from "./socket/handlers/ping";
 import DataHandler from "./socket/handlers/data";
 import AlarmHandler from "./socket/handlers/alarm";
 import LogHandler from "./socket/handlers/log";
+import ClientsHandler from "./socket/handlers/clients";
+
 import router from "./socket/router";
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 5001;
@@ -14,6 +16,7 @@ router.on("ping", PingHandler);
 router.on("data", DataHandler);
 router.on("alarm", AlarmHandler);
 router.on("log", LogHandler);
+router.on("clients", ClientsHandler);
 
 server.listen(port, "0.0.0.0", () => {
   /* eslint-disable no-console */

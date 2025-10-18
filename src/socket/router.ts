@@ -24,7 +24,6 @@ export class MessageRouter {
 
   dispatch(ws: WebSocket, parsed: SocketMessage) {
     const arr = this.handlers.get(parsed.type) ?? [];
-    console.log(parsed.type, arr.length);
     for (const h of arr) {
       try {
         h(ws, parsed);
