@@ -17,6 +17,7 @@ router.on("data", DataHandler);
 router.on("alarm", AlarmHandler);
 router.on("log", LogHandler);
 router.on("clients", ClientsHandler);
+router.on("can_bus", DataHandler); // TODO: Create custom handler
 
 server.listen(port, "0.0.0.0", () => {
   /* eslint-disable no-console */
