@@ -4,7 +4,7 @@
 
 This program is the server side of the shore computer program. It is what the boat connects and sends data to. This application will then store that data in a database and propagate it to all connected clients.
 
-See [Dakdot/eboat-client](https://github.com/Dakdot/eboat-client) for the client side of the shore computer.
+See [Stevens-Electrical-Boatworks/shore-client](https://github.com/Stevens-Electric-Boatworks/shore-client) for the client side of the shore computer.
 
 ### Built With
 
