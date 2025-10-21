@@ -1,30 +1,19 @@
 import { WebSocket } from "ws";
 
 export type DataReading = {
-  id: number;
   timestamp: Date;
-  vbat?: number;
-  vebat?: number;
-  temp_bat?: number;
-  current_bat?: number;
-  coolant_temp?: number;
-  rpm_a?: number;
-  rpm_b?: number;
-  motor_synch?: number;
-  speed?: number;
-  heading?: number;
-  gps_lat?: number;
-  gps_lon?: number;
-  gps_alt?: number;
-  imu_x?: number;
-  imu_y?: number;
-  imu_z?: number;
-  propulsion_angle?: number;
-  bms_temp?: number;
-  bat_comp_temp?: number;
-  throttle?: number;
-  battery_percent?: number;
-  can_bus_util_percent?: number;
+  mc_voltage?: number;
+  mc_thr_mv?: number;
+  mc_motor_temp?: number;
+  mc_motor_current?: number;
+  mc_motor_torque?: number;
+  mc_motor_power?: number;
+  coolant_inlet_temp?: number;
+  coolant_outlet_temp?: number;
+  gnss_latitude?: number;
+  gnss_longitude?: number;
+  gnss_speed?: number;
+  gnss_track?: number;
 };
 
 class AppState {

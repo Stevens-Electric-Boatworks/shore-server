@@ -1,4 +1,5 @@
 import server from "./socket/server";
+import state from "./app-state";
 
 import IdentHandler from "./socket/handlers/ident";
 import PingHandler from "./socket/handlers/ping";
@@ -8,6 +9,7 @@ import LogHandler from "./socket/handlers/log";
 import ClientsHandler from "./socket/handlers/clients";
 
 import router from "./socket/router";
+import { db } from "./lib/db";
 
 const port = process.env.PORT ? parseInt(process.env.PORT) : 5001;
 
@@ -24,3 +26,13 @@ server.listen(port, "0.0.0.0", () => {
   console.log(`Listening: http://localhost:${port}`);
   /* eslint-enable no-console */
 });
+
+setInterval(async () => {
+  const buffer = state.dataBuffer;
+  if (buffer.length < 1) return; // Don't do anything if there is no data to store
+
+  console.log(`Pushing ${buffer.length} records to database...`);
+  await db.dataReading.createMany({
+    data: buffer,
+  });
+}, 3000);

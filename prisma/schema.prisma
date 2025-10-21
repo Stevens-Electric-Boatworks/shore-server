@@ -5,54 +5,27 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-    provider = "prisma-client-js"
-    output   = "../generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model DataReading {
-    id                   Int      @id @default(autoincrement())
-    timestamp            DateTime
-    vbat                 Float?
-    vebat                Float?
-    temp_bat             Float?
-    current_bat          Int?
-    coolant_temp         Float?
-    rpm_a                Int?
-    rpm_b                Int?
-    motor_synch          Float?
-    speed                Int?
-    heading              Int?
-    gps_lat              Float?
-    gps_lon              Float?
-    gps_alt              Float?
-    imu_x                Float?
-    imu_y                Float?
-    imu_z                Float?
-    propulsion_angle     Float?
-    bms_temp             Float?
-    bat_comp_temp        Float?
-    throttle             Int?
-    battery_percent      Int?
-    can_bus_util_percent Int?
-}
-
-enum AlarmType {
-    ERROR
-    WARNING
-}
-
-//TODO: Include CAN BUS State
-
-model Alarm {
-    timestamp DateTime
-    id        Int
-    type      AlarmType?
-    message   String?
-
-    @@unique([id, timestamp])
+  timestamp           DateTime @id
+  mc_voltage          Float?
+  mc_thr_mv           Float?
+  mc_motor_temp       Float?
+  mc_motor_current    Int?
+  mc_motor_torque     Int?
+  mc_motor_power      Int?
+  coolant_inlet_temp  Float?
+  coolant_outlet_temp Float?
+  gnss_latitude       Float?
+  gnss_longitude      Float?
+  gnss_speed          Int?
+  gnss_track          Int?
 }

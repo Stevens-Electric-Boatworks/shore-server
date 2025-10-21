@@ -1,6 +1,6 @@
 import express from "express";
 import { db } from "../lib/db";
-import { read } from "fs";
+import DownloadHandler from "./download";
 
 const router = express.Router();
 
@@ -13,5 +13,7 @@ router.get<{}, {}>("/", async (req, res) => {
 router.get("/latest", (req, res) => {
   res.json({ latest: true });
 });
+
+router.get("/download", DownloadHandler);
 
 export default router;
