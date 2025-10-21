@@ -2,8 +2,6 @@ import { Handler } from "../router";
 import state from "../../app-state";
 
 const handler: Handler = (ws, msg) => {
-  console.log("msg:", JSON.stringify(msg));
-
   if (!msg.payload) {
     console.log("[WARN]: Got data packet with no payload, ignoring...");
     return;
@@ -11,15 +9,14 @@ const handler: Handler = (ws, msg) => {
 
   const payload = msg.payload;
 
-  console.log("payload:", JSON.stringify(payload));
-
   if (!payload.timestamp) {
-    console.log("[WARN]: Got data packet with no timestamp, ignoring...");
-    return;
+    console.log(
+      "[WARN]: Got data packet with no timestamp, using server time...",
+    );
   }
 
   state.dataBuffer.push({
-    timestamp: new Date(payload.timestamp),
+    timestamp: new Date(payload.timestamp || Date.now()),
     mc_voltage: payload.voltage,
     mc_thr_mv: payload.throttle_mv,
     mc_motor_temp: payload.motor_temp,
