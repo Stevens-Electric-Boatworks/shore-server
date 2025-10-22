@@ -90,6 +90,7 @@ const handler = async (req: Request, res: Response) => {
   // Send as downloadable CSV
   res.set("Content-Type", "text/csv; charset=utf-8");
   res.set("Content-Disposition", `attachment; filename="${filename}"`);
+  res.set("Access-Control-Expose-Headers", "Content-Disposition");
   return res.send(csvContent);
 };
 
