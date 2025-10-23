@@ -34,11 +34,12 @@ setInterval(async () => {
   if (buffer.length < 1) return; // Don't do anything if there is no data to store
 
   console.log(`[INFO]: Pushing ${buffer.length} records to database...`);
+
   try {
     await db.dataReading.createMany({
       data: buffer,
     });
-    state.dataBuffer = []; // Clear buffer after data is safely stored in database
+    state.flushDataBuffer();
   } catch (err) {
     console.error("[ERR]: Failed to upload records to database:", err);
   }

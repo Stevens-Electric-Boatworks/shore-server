@@ -34,6 +34,9 @@ const handler = async (req: Request, res: Response) => {
         lte: toDate,
       },
     },
+    orderBy: {
+      timestamp: "asc",
+    },
   });
 
   if (data.length < 1) {

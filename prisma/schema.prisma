@@ -15,7 +15,8 @@ datasource db {
 }
 
 model DataReading {
-  timestamp           DateTime @id
+  id                  Int      @id @default(autoincrement())
+  timestamp           DateTime
   mc_voltage          Float?
   mc_thr_mv           Float?
   mc_motor_temp       Float?

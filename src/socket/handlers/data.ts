@@ -15,7 +15,7 @@ const handler: Handler = (ws, msg) => {
     );
   }
 
-  state.dataBuffer.push({
+  state.pushDataReading({
     timestamp: new Date(),
     mc_voltage: payload.voltage,
     mc_thr_mv: payload.throttle_mv,
