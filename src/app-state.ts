@@ -18,6 +18,7 @@ export type DataReading = {
 
 class AppState {
   public clients = new Map<string, WebSocket>();
+  public boat: WebSocket | null = null;
 
   public dataBuffer: DataReading[] = [];
 
