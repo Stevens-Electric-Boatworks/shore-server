@@ -1,4 +1,4 @@
-import { LogEntry } from "@/logs-manager";
+import { LogEntry } from "../../logs-manager";
 import { Handler } from "../router";
 import state from "../../app-state";
 
