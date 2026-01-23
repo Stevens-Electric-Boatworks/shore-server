@@ -1,5 +1,6 @@
 import { WebSocket } from "ws";
 import { db } from "./lib/db";
+import { LogsManager } from "./logs-manager";
 
 export type DataReading = {
   timestamp: Date;
@@ -17,19 +18,9 @@ export type DataReading = {
   gnss_track?: number;
 };
 
-export type LogEntry = {
-  timestamp: Date;
-  level: number;
-  message: string;
-  emitter: string;
-  file?: string;
-  function?: string;
-  line?: string;
-};
-
 export type Session = {
   startTime: Date;
-  endTime: Date;
+  endTime?: Date;
 };
 
 class AppState {
@@ -37,22 +28,11 @@ class AppState {
   public boat: WebSocket | null = null;
 
   public dataBuffer: DataReading[] = [];
-  public logsBuffer: LogEntry[] = [];
+  public logsManager = new LogsManager();
 
   public currentSession: Session | null = null;
 
-  constructor() {
-    db.sessionEntry
-      .findFirst({
-        where: {
-          endTime: new Date(),
-        },
-        orderBy: {
-          endTime: "desc",
-        },
-      })
-      .then((e) => (this.currentSession = e));
-  }
+  constructor() {}
 
   addClient(id: string, ws: WebSocket) {
     this.clients.set(id, ws);

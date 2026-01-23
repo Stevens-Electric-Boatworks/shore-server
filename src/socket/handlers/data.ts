@@ -10,9 +10,9 @@ const handler: Handler = (ws, msg) => {
   const payload = msg.payload;
 
   if (!payload.timestamp) {
-    console.log(
-      "[WARN]: Got data packet with no timestamp, using server time...",
-    );
+    // console.log(
+    //   "[WARN]: Got data packet with no timestamp, using server time...",
+    // );
   }
 
   state.pushDataReading({

@@ -39,7 +39,7 @@ model LogEntry {
   emitter   String
   file      String?
   function  String?
-  line      String?
+  line      Int?
 }
 
 model SessionEntry {

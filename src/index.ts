@@ -39,7 +39,7 @@ setInterval(async () => {
   const buffer = state.dataBuffer;
   if (buffer.length < 1) return; // Don't do anything if there is no data to store
 
-  console.log(`[INFO]: Pushing ${buffer.length} records to database...`);
+  console.log(`[INFO]: Pushing ${buffer.length} data readings to database...`);
 
   try {
     await db.dataReading.createMany({
@@ -49,4 +49,6 @@ setInterval(async () => {
   } catch (err) {
     console.error("[ERR]: Failed to upload records to database:", err);
   }
+
+  await state.logsManager.upload();
 }, 3000);

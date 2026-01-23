@@ -1,6 +1,7 @@
 import router, { Handler } from "../router";
 import state from "../../app-state";
 import { db } from "../../lib/db";
+import { LogsManager } from "@/logs-manager";
 
 const handler: Handler = async (ws, msg) => {
   if (msg.message === "client") {
@@ -10,32 +11,12 @@ const handler: Handler = async (ws, msg) => {
 
     router.dispatch(ws, { type: "clients" });
 
-    const logs = await db.logEntry.findMany({
-      where: {
-        timestamp: {
-          gte: state.currentSession?.startTime,
-        },
-      },
-      orderBy: {
-        timestamp: "asc",
-      },
-      take: 5000,
-    });
-
-    const mappedLogs = logs.map((e) => ({
-      timestamp: e.timestamp.getUTCSeconds(),
-      msg: e.message,
-      emitter: e.emitter,
-      level: e.level,
-      file: e.file,
-      function: e.function,
-      line: e.line,
-    }));
+    const logs = state.logsManager.getLogs();
 
     ws.send(
       JSON.stringify({
         type: "log",
-        payload: mappedLogs,
+        payload: logs,
       }),
     );
   }
@@ -51,13 +32,27 @@ const handler: Handler = async (ws, msg) => {
     }
 
     // Remove the boat from the state once it is disconnected
-    ws.addEventListener("close", () => {
+    ws.addEventListener("close", async () => {
       state.boat = null;
+      if (state.currentSession) {
+        state.currentSession.endTime = new Date();
+        await db.sessionEntry.create({
+          data: {
+            startTime: state.currentSession.startTime,
+            endTime: state.currentSession.endTime || new Date(),
+          },
+        });
+        console.log(`Uploaded session entry.`);
+      }
       console.log("Boat disconnected.");
     });
 
     const id = (ws as any).__socketId;
     state.boat = ws;
+    state.currentSession = {
+      startTime: new Date(),
+    };
+    state.logsManager = new LogsManager();
     console.log(`Boat was identified (${id})`);
   }
 };
