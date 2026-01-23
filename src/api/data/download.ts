@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { db } from "../lib/db";
+import { db } from "../../lib/db";
 
 const handler = async (req: Request, res: Response) => {
   const parseNumberParam = (val: any): number | undefined => {

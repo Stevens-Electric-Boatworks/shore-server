@@ -30,3 +30,20 @@ model DataReading {
   gnss_speed          Int?
   gnss_track          Int?
 }
+
+model LogEntry {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime
+  level     Int
+  message   String
+  emitter   String
+  file      String?
+  function  String?
+  line      String?
+}
+
+model SessionEntry {
+  id        Int      @id @default(autoincrement())
+  startTime DateTime
+  endTime   DateTime
+}

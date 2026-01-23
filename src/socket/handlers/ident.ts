@@ -1,13 +1,43 @@
 import router, { Handler } from "../router";
 import state from "../../app-state";
+import { db } from "../../lib/db";
 
-const handler: Handler = (ws, msg) => {
+const handler: Handler = async (ws, msg) => {
   if (msg.message === "client") {
     const id = (ws as any).__socketId;
     state.addClient(id, ws);
     console.log(`Client (${id}) identified`);
 
     router.dispatch(ws, { type: "clients" });
+
+    const logs = await db.logEntry.findMany({
+      where: {
+        timestamp: {
+          gte: state.currentSession?.startTime,
+        },
+      },
+      orderBy: {
+        timestamp: "asc",
+      },
+      take: 5000,
+    });
+
+    const mappedLogs = logs.map((e) => ({
+      timestamp: e.timestamp.getUTCSeconds(),
+      msg: e.message,
+      emitter: e.emitter,
+      level: e.level,
+      file: e.file,
+      function: e.function,
+      line: e.line,
+    }));
+
+    ws.send(
+      JSON.stringify({
+        type: "log",
+        payload: mappedLogs,
+      }),
+    );
   }
 
   if (msg.message === "boat") {
@@ -15,7 +45,7 @@ const handler: Handler = (ws, msg) => {
     if (state.boat) {
       console.log(
         `[WARN:] Attempted to identify boat when it is already identified.\n
-        Current boat socket ID: ${(state.boat as any).__socketId}`
+        Current boat socket ID: ${(state.boat as any).__socketId}`,
       );
       return;
     }

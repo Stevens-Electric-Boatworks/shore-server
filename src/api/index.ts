@@ -1,6 +1,7 @@
 import express from "express";
 import { db } from "../lib/db";
-import DownloadHandler from "./download";
+import DownloadHandler from "./data/download";
+import DataRouter from "./data";
 
 const router = express.Router();
 
@@ -14,6 +15,7 @@ router.get("/latest", (req, res) => {
   res.json({ latest: true });
 });
 
+router.use("/data", DataRouter);
 router.get("/download", DownloadHandler);
 
 export default router;
