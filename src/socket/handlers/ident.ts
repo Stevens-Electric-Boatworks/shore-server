@@ -28,6 +28,7 @@ const handler: Handler = async (ws, msg) => {
         `[WARN:] Attempted to identify boat when it is already identified.\n
         Current boat socket ID: ${(state.boat as any).__socketId}`,
       );
+      ws.close();
       return;
     }
 
@@ -53,6 +54,7 @@ const handler: Handler = async (ws, msg) => {
       startTime: new Date(),
     };
     state.logsManager = new LogsManager();
+    state.broadcast({ type: "session" });
     console.log(`Boat was identified (${id})`);
   }
 };
