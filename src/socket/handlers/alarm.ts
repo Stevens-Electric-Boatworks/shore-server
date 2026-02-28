@@ -1,6 +1,6 @@
 import { Handler } from "../router";
 import state from "../../app-state";
-import { AlarmEntry } from "@/alarms-manager";
+import { AlarmEntry } from "../../alarms-manager";
 import { AlarmType } from "../../../generated/prisma";
 
 const handler: Handler = (ws, msg) => {

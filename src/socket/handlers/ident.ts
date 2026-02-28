@@ -3,7 +3,7 @@ import state from "../../app-state";
 import { db } from "../../lib/db";
 import { LogsManager } from "../../logs-manager";
 import { AlarmType } from "../../../generated/prisma";
-import { AlarmsManager } from "@/alarms-manager";
+import { AlarmsManager } from "../../alarms-manager";
 
 const handler: Handler = async (ws, msg) => {
   if (msg.message === "client") {
