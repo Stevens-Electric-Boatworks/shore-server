@@ -51,4 +51,5 @@ setInterval(async () => {
   }
 
   await state.logsManager.upload();
+  await state.alarmsManager.upload();
 }, 3000);

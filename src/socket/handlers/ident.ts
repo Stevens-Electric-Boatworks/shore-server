@@ -2,6 +2,8 @@ import router, { Handler } from "../router";
 import state from "../../app-state";
 import { db } from "../../lib/db";
 import { LogsManager } from "../../logs-manager";
+import { AlarmType } from "../../../generated/prisma";
+import { AlarmsManager } from "@/alarms-manager";
 
 const handler: Handler = async (ws, msg) => {
   if (msg.message === "client") {
@@ -12,6 +14,7 @@ const handler: Handler = async (ws, msg) => {
     router.dispatch(ws, { type: "clients" });
 
     const logs = state.logsManager.getLogs();
+    const alarms = state.alarmsManager.getAlarms();
 
     ws.send(
       JSON.stringify({
@@ -19,6 +22,16 @@ const handler: Handler = async (ws, msg) => {
         payload: logs,
       }),
     );
+
+    alarms.forEach((e) => {
+      ws.send(
+        JSON.stringify({
+          type: "alarm",
+          action: "set",
+          payload: e,
+        }),
+      );
+    });
   }
 
   if (msg.message === "boat") {
@@ -54,6 +67,7 @@ const handler: Handler = async (ws, msg) => {
       startTime: new Date(),
     };
     state.logsManager = new LogsManager();
+    state.alarmsManager = new AlarmsManager();
     state.broadcast({ type: "session" });
     console.log(`Boat was identified (${id})`);
   }
