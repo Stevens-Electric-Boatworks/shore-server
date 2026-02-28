@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import { db } from "./lib/db";
 import { LogsManager } from "./logs-manager";
+import { AlarmsManager } from "./alarms-manager";
 
 export type DataReading = {
   timestamp: Date;
@@ -29,6 +30,7 @@ class AppState {
 
   public dataBuffer: DataReading[] = [];
   public logsManager = new LogsManager();
+  public alarmsManager = new AlarmsManager();
 
   public currentSession: Session | null = null;
 

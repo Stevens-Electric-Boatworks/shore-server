@@ -47,3 +47,19 @@ model SessionEntry {
   startTime DateTime
   endTime   DateTime
 }
+
+enum AlarmType {
+  ERROR
+  WARNING
+  UNKNOWN
+}
+
+model AlarmEntry {
+  pk             Int       @id @default(autoincrement())
+  id             Int
+  type           AlarmType
+  message        String
+  raisedAt       DateTime
+  acknowledgedAt DateTime?
+  resolvedAt     DateTime?
+}
