@@ -21,6 +21,13 @@ const handler: Handler = (ws, msg) => {
     });
     state.alarmsManager.pushAlarm(alarm);
   } else if (msg.action == "resolve") {
+    const id = msg.id as number;
+    state.alarmsManager.resolveAlarm(id);
+    state.broadcast({
+      type: "alarm",
+      action: "resolve",
+      id,
+    });
   } else if (msg.action == "acknowledge") {
     const id = msg.id as number;
     state.alarmsManager.acknowledgeAlarm(id);

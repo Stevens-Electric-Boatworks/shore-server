@@ -1,3 +1,4 @@
+import appState from "./app-state";
 import { db } from "./lib/db";
 
 export type AlarmType = "ERROR" | "WARNING" | "UNKNOWN";
@@ -30,7 +31,7 @@ export class AlarmsManager {
   }
 
   /**
-   * Acknowledge alarms of a given ID. NOTE: If there are mulitple alarms
+   * Acknowledge alarms of a given ID. NOTE: If there are multiple alarms
    * with the same ID, this function will acknowledge all of them.
    * @param id The ID of the alarm to acknowledge.
    */
@@ -42,10 +43,55 @@ export class AlarmsManager {
       .forEach((e) => {
         e.acknowledgedAt = now;
       });
+    // Only pick alarms that are:
+    // - from this session
+    // - not acknowledged yet
+    // - not resolved yet
+    db.alarmEntry.updateMany({
+      where: {
+        id,
+        acknowledgedAt: undefined,
+        resolvedAt: undefined,
+        raisedAt: {
+          gte: appState.currentSession?.startTime,
+        },
+      },
+      data: {
+        acknowledgedAt: now,
+      },
+    });
   }
 
   /**
-   * Returns
+   * Resolve alarms of a given ID. NOTE: If there are multiple alarms
+   * with the same ID, this function will resolve all of them.
+   * @param id The ID of the alarm to resolve.
+   */
+  public resolveAlarm(id: number) {
+    const now = new Date();
+    this.buffer
+      .filter((e) => e.id == id)
+      .filter((e) => !e.resolvedAt)
+      .forEach((e) => (e.resolvedAt = now));
+    // Only pick alarms that are:
+    // - from this session
+    // - not resolved yet
+    db.alarmEntry.updateMany({
+      where: {
+        id,
+        resolvedAt: undefined,
+        raisedAt: {
+          gte: appState.currentSession?.startTime,
+        },
+      },
+      data: {
+        resolvedAt: now,
+      },
+    });
+  }
+
+  /**
+   * Returns list of currently active alarms.
    */
   public getAlarms() {
     return this.buffer;
