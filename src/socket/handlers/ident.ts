@@ -2,8 +2,9 @@ import router, { Handler } from "../router";
 import state from "../../app-state";
 import { db } from "../../lib/db";
 import { LogsManager } from "../../logs-manager";
-import { AlarmType } from "../../../generated/prisma";
 import { AlarmsManager } from "../../alarms-manager";
+import si from "systeminformation";
+import { cp } from "node:fs/promises";
 
 const handler: Handler = async (ws, msg) => {
   if (msg.message === "client") {
@@ -32,6 +33,35 @@ const handler: Handler = async (ws, msg) => {
         }),
       );
     });
+    const os = await si.osInfo();
+    const cpu = await si.cpu();
+    const mem = await si.mem();
+    const cpuLoad = await si.currentLoad(); // { currentLoad: 23.5, ... }
+
+    ws.send(
+      JSON.stringify({
+        type: "data",
+        payload: {
+          server: {
+            os: {
+              host: os.distro + " " + os.release + " " + os.arch,
+              hostname: os.hostname,
+              platform: os.platform,
+            },
+            cpu: {
+              model: cpu.manufacturer + " " + cpu.brand,
+              cores: cpu.cores,
+              speed: cpu.speed,
+              currentLoad: cpuLoad.currentLoad,
+            },
+            memory: {
+              total: mem.total,
+              active: mem.active,
+            },
+          },
+        },
+      }),
+    );
   }
 
   if (msg.message === "boat") {

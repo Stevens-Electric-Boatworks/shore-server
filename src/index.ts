@@ -9,6 +9,8 @@ import LogHandler from "./socket/handlers/log";
 import ClientsHandler from "./socket/handlers/clients";
 import XtermHandler from "./socket/handlers/xterm";
 
+import broadcastSystemInfo from "./socket/handlers/system-info";
+
 import router from "./socket/router";
 import { db } from "./lib/db";
 
@@ -53,3 +55,7 @@ setInterval(async () => {
   await state.logsManager.upload();
   await state.alarmsManager.upload();
 }, 3000);
+
+setInterval(() => {
+  broadcastSystemInfo();
+}, 2000);
