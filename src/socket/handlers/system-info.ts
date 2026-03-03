@@ -1,4 +1,4 @@
-import appState from "@/app-state";
+import appState from "../../app-state";
 
 import si from "systeminformation";
 
