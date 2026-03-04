@@ -1,4 +1,4 @@
-import { db } from "../../lib/db";
+import { db } from "@/lib/db";
 import express, { Request } from "express";
 
 const router = express.Router();
