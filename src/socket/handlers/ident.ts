@@ -37,6 +37,7 @@ const handler: Handler = async (ws, msg) => {
     const cpu = await si.cpu();
     const mem = await si.mem();
     const cpuLoad = await si.currentLoad(); // { currentLoad: 23.5, ... }
+    const disk = await si.fsSize();
 
     ws.send(
       JSON.stringify({
@@ -57,6 +58,10 @@ const handler: Handler = async (ws, msg) => {
             memory: {
               total: mem.total,
               active: mem.active,
+            },
+            disk: {
+              total: disk[0].size,
+              used: disk[0].used,
             },
           },
         },

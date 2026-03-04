@@ -18,6 +18,9 @@ export default async function broadcast() {
         cpu: {
           currentLoad: cpuLoad.currentLoad,
         },
+        disk: {
+          used: disk[0].used,
+        },
       },
     },
   });
