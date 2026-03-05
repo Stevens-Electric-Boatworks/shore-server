@@ -42,16 +42,17 @@ export class AlarmsManager {
       .filter((e) => !e.acknowledgedAt || !e.resolvedAt)
       .forEach((e) => {
         console.log(e);
-        const res = db.alarmEntry.updateManyAndReturn({
-          where: {
-            ...e,
-          },
-          data: {
-            acknowledgedAt: now,
-          },
-        });
+        db.alarmEntry
+          .updateManyAndReturn({
+            where: {
+              ...e,
+            },
+            data: {
+              acknowledgedAt: now,
+            },
+          })
+          .then((e) => console.log(e));
         e.acknowledgedAt = now;
-        console.log(res);
       });
     // Only pick alarms that are:
     // - from this session
