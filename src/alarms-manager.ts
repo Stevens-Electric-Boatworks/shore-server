@@ -41,17 +41,14 @@ export class AlarmsManager {
       .filter((e) => e.id == id)
       .filter((e) => !e.acknowledgedAt || !e.resolvedAt)
       .forEach((e) => {
-        console.log(e);
-        db.alarmEntry
-          .updateManyAndReturn({
-            where: {
-              ...e,
-            },
-            data: {
-              acknowledgedAt: now,
-            },
-          })
-          .then((e) => console.log(e));
+        db.alarmEntry.updateManyAndReturn({
+          where: {
+            ...e,
+          },
+          data: {
+            acknowledgedAt: now,
+          },
+        });
         e.acknowledgedAt = now;
       });
     // Only pick alarms that are:
@@ -70,22 +67,20 @@ export class AlarmsManager {
     this.buffer
       .filter((e) => e.id == id)
       .filter((e) => !e.resolvedAt)
-      .forEach((e) => (e.resolvedAt = now));
+      .forEach((e) => {
+        db.alarmEntry.updateMany({
+          where: {
+            ...e,
+          },
+          data: {
+            resolvedAt: now,
+          },
+        });
+        e.resolvedAt = now;
+      });
     // Only pick alarms that are:
     // - from this session
     // - not resolved yet
-    db.alarmEntry.updateMany({
-      where: {
-        id,
-        resolvedAt: undefined,
-        raisedAt: {
-          gte: appState.currentSession?.startTime,
-        },
-      },
-      data: {
-        resolvedAt: now,
-      },
-    });
   }
 
   /**
