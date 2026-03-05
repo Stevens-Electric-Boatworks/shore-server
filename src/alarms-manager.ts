@@ -41,25 +41,20 @@ export class AlarmsManager {
       .filter((e) => e.id == id)
       .filter((e) => !e.acknowledgedAt || !e.resolvedAt)
       .forEach((e) => {
+        db.alarmEntry.updateMany({
+          where: {
+            ...e,
+          },
+          data: {
+            acknowledgedAt: now,
+          },
+        });
         e.acknowledgedAt = now;
       });
     // Only pick alarms that are:
     // - from this session
     // - not acknowledged yet
     // - not resolved yet
-    db.alarmEntry.updateMany({
-      where: {
-        id,
-        acknowledgedAt: undefined,
-        resolvedAt: undefined,
-        raisedAt: {
-          gte: appState.currentSession?.startTime,
-        },
-      },
-      data: {
-        acknowledgedAt: now,
-      },
-    });
   }
 
   /**
