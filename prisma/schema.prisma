@@ -15,20 +15,10 @@ datasource db {
 }
 
 model DataReading {
-  id                  Int      @id @default(autoincrement())
-  timestamp           DateTime
-  mc_voltage          Float?
-  mc_thr_mv           Float?
-  mc_motor_temp       Float?
-  mc_motor_current    Int?
-  mc_motor_torque     Int?
-  mc_motor_power      Int?
-  coolant_inlet_temp  Float?
-  coolant_outlet_temp Float?
-  gnss_latitude       Float?
-  gnss_longitude      Float?
-  gnss_speed          Int?
-  gnss_track          Int?
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime
+  key       String
+  value     String
 }
 
 model LogEntry {

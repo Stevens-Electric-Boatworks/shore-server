@@ -5,18 +5,8 @@ import { AlarmsManager } from "./alarms-manager";
 
 export type DataReading = {
   timestamp: Date;
-  mc_voltage?: number;
-  mc_thr_mv?: number;
-  mc_motor_temp?: number;
-  mc_motor_current?: number;
-  mc_motor_torque?: number;
-  mc_motor_power?: number;
-  coolant_inlet_temp?: number;
-  coolant_outlet_temp?: number;
-  gnss_latitude?: number;
-  gnss_longitude?: number;
-  gnss_speed?: number;
-  gnss_track?: number;
+  key: string;
+  value: any;
 };
 
 export type Session = {
