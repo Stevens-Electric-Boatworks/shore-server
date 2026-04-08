@@ -46,8 +46,9 @@ setInterval(async () => {
   try {
     await db.dataReading.createMany({
       data: buffer.map((e) => ({
-        ...e,
-        value: e.value as string,
+        timestamp: e.timestamp,
+        key: e.key,
+        value: e.value.toString(),
       })),
     });
     state.flushDataBuffer();
