@@ -45,7 +45,10 @@ setInterval(async () => {
 
   try {
     await db.dataReading.createMany({
-      data: buffer,
+      data: buffer.map((e) => ({
+        ...e,
+        value: e.value as string,
+      })),
     });
     state.flushDataBuffer();
   } catch (err) {
