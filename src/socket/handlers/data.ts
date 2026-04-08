@@ -9,7 +9,8 @@ const handler: Handler = (ws, msg) => {
   }
 
   const payload = msg.payload;
-  const timestamp = new Date(payload.timestamp) || new Date();
+  const timestamp = new Date();
+  // TODO: Be able to accept timestamps from boat
 
   if (!timestamp) {
     // console.log(
