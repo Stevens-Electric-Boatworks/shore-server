@@ -9,9 +9,9 @@ const handler = async (req: Request, res: Response) => {
         "An internal server error has occurred. Please contact the system administrator.",
     });
 
-  const secret = process.env.SECRET_KEY;
+  const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
-  if (!secret) {
+  if (!accessTokenSecret) {
     console.error(
       "Tried to generate a JWT but no secret is defined in environment variables! Please ",
     );
@@ -23,7 +23,7 @@ const handler = async (req: Request, res: Response) => {
 
   const accessToken = jwt.sign(
     { sub: req.user.id, sessionId: req.sessionId, role: req.user.role },
-    secret,
+    accessTokenSecret,
     { expiresIn: "15m" },
   );
 

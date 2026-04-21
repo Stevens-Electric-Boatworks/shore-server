@@ -25,11 +25,11 @@ const handler = async (req: Request, res: Response) => {
 
     if (!match) return res.status(404).json({ error: "Invalid credentials" });
 
-    const secret = process.env.SECRET_KEY;
+    const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
-    if (!secret) {
+    if (!accessTokenSecret) {
       console.error(
-        "Tried to generate a JWT but no secret is defined in environment variables! Please ",
+        "Tried to generate a JWT but no access token secret is defined in environment variables!",
       );
       return res.status(500).json({
         error:
@@ -57,7 +57,7 @@ const handler = async (req: Request, res: Response) => {
 
     const accessToken = jwt.sign(
       { sub: user.id, sessionId, role: user.role },
-      secret,
+      accessTokenSecret,
       { expiresIn: "15m" },
     );
 
