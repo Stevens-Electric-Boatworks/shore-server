@@ -1,15 +1,26 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "./types";
+import { db } from "./lib/db";
 
-const AuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
+const getToken = (req: Request): string | null => {
+  if (req.cookies.accessToken) return req.cookies.accessToken;
+  if (process.env.NODE_ENV === "development") {
+    const authHeader = req.headers.authorization;
+    if (authHeader?.startsWith("Bearer ")) return authHeader.slice(7);
+  }
+  return null;
+};
+
+const AuthMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = getToken(req);
 
-  if (!token)
-    return res
-      .status(401)
-      .json({ error: "Invalid or no authentication token." });
+  if (!token) return res.status(401).json({ error: "Unauthorized." });
 
   const secret = process.env.SECRET_KEY;
 
@@ -23,14 +34,28 @@ const AuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
     });
   }
 
-  jwt.verify(token, secret, (err, user) => {
-    if (err)
-      return res
-        .status(403)
-        .json({ error: "Invalid or no authentication token." });
-    req.user = user as User;
+  try {
+    const payload = jwt.verify(token, secret) as {
+      sessionId: string;
+      sub: string;
+      role: "USER" | "ADMIN";
+    };
+
+    const session = await db.session.findUnique({
+      where: { id: payload.sessionId },
+      include: { user: true },
+    });
+
+    if (!session || session.revokedAt || session.expiresAt < new Date()) {
+      return res.status(401).json({ error: "Invalid session." });
+    }
+
+    req.user = session.user;
+    req.sessionId = session.id;
     next();
-  });
+  } catch {
+    return res.status(401).json({ error: "Invalid or expired token." });
+  }
 };
 
 export default AuthMiddleware;

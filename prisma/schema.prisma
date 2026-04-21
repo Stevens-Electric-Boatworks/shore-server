@@ -19,15 +19,28 @@ model User {
   username String @unique
   password String
 
-  role UserRole @default(USER)
-
-  refreshToken          String?
-  refreshTokenCreatedAt DateTime?
+  role     UserRole  @default(USER)
+  sessions Session[]
 }
 
 enum UserRole {
   USER
   ADMIN
+}
+
+model Session {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  tokenHash String  @unique
+  userAgent String?
+  ipAddress String?
+
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
+  lastUsedAt DateTime  @default(now())
+  revokedAt  DateTime?
 }
 
 model DataReading {

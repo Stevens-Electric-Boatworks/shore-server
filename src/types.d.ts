@@ -14,6 +14,7 @@ type User = {
 declare global {
   namespace Express {
     interface Request {
+      sessionId: string | undefined;
       user: User | undefined;
     }
   }

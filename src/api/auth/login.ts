@@ -2,74 +2,96 @@ import { db } from "@/lib/db";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 const handler = async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
-  if (!username || !password)
-    return res.status(400).json({
-      error: "Missing credentials. Please provide a username and password.",
+  try {
+    if (!username || !password)
+      return res.status(400).json({
+        error: "Missing credentials. Please provide a username and password.",
+      });
+
+    const user = await db.user.findFirst({
+      where: {
+        username,
+      },
     });
 
-  const user = await db.user.findFirst({
-    where: {
-      username,
-    },
-  });
+    if (!user) return res.status(404).json({ error: "Invalid credentials" });
 
-  if (!user) return res.status(404).json({ error: "Invalid credentials" });
+    const match = await bcrypt.compare(password, user.password);
 
-  const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(404).json({ error: "Invalid credentials" });
 
-  if (!match) return res.status(404).json({ error: "Invalid credentials" });
+    const secret = process.env.SECRET_KEY;
 
-  const secret = process.env.SECRET_KEY;
+    if (!secret) {
+      console.error(
+        "Tried to generate a JWT but no secret is defined in environment variables! Please ",
+      );
+      return res.status(500).json({
+        error:
+          "An internal server error occurred. Please contact the system administrator.",
+      });
+    }
 
-  if (!secret) {
-    console.error(
-      "Tried to generate a JWT but no secret is defined in environment variables! Please ",
+    const sessionId = crypto.randomUUID();
+    const rawRefreshToken = crypto.randomBytes(64).toString("hex");
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(rawRefreshToken)
+      .digest("hex");
+
+    await db.session.create({
+      data: {
+        id: sessionId,
+        userId: user.id,
+        tokenHash,
+        userAgent: req.headers["user-agent"],
+        ipAddress: req.ip,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      },
+    });
+
+    const accessToken = jwt.sign(
+      { sub: user.id, sessionId, role: user.role },
+      secret,
+      { expiresIn: "15m" },
     );
+
+    const isDev = process.env.NODE_ENV === "development";
+
+    if (!isDev) {
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 15 * 60 * 1000,
+      });
+      res.cookie("refreshToken", rawRefreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        path: "/auth/refresh",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+      return res.json({ message: "Login successful." });
+    }
+
+    // In dev, return tokens in the body so the client can use them manually
+    return res.json({
+      message: "Login successful.",
+      accessToken,
+      refreshToken: rawRefreshToken,
+    });
+  } catch {
     return res.status(500).json({
       error:
         "An internal server error occurred. Please contact the system administrator.",
     });
   }
-
-  const accessToken = jwt.sign(
-    {
-      username: user.username,
-      id: user.id,
-      role: user.role,
-    },
-    secret,
-    { expiresIn: "1h" },
-  );
-
-  const refreshToken = jwt.sign(
-    {
-      username: user.username,
-    },
-    secret,
-    {
-      expiresIn: "1d",
-    },
-  );
-
-  await db.user.update({
-    where: {
-      id: user.id,
-    },
-    data: {
-      refreshToken,
-      refreshTokenCreatedAt: new Date(),
-    },
-  });
-
-  res.json({
-    message: "Login successful.",
-    accessToken,
-    refreshToken,
-  });
 };
 
 export default handler;

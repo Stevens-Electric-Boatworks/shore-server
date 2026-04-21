@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 const handler = async (req: Request, res: Response) => {
-  if (!req.user)
+  if (!req.user || !req.sessionId)
     return res.status(500).json({
       error:
         "An internal server error has occurred. Please contact the system administrator.",
@@ -22,13 +22,9 @@ const handler = async (req: Request, res: Response) => {
   }
 
   const accessToken = jwt.sign(
-    {
-      username: req.user.username,
-      id: req.user.id,
-      role: req.user.role,
-    },
+    { sub: req.user.id, sessionId: req.sessionId, role: req.user.role },
     secret,
-    { expiresIn: "1h" },
+    { expiresIn: "15m" },
   );
 
   res.json({
