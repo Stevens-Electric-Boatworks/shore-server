@@ -5,8 +5,10 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const mockFindFirst = db.user.findFirst as jest.Mock;
+export const mockCreate = db.user.create as jest.Mock;
 export const mockUpdate = db.user.update as jest.Mock;
 export const mockBcryptCompare = bcrypt.compare as jest.Mock;
+export const mockBcryptHash = bcrypt.hash as jest.Mock;
 export const mockJwtSign = jwt.sign as jest.Mock;
 
 export const mockReqRes = (body: object) => {
