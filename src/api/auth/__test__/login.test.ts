@@ -25,7 +25,7 @@ import { PassThrough } from "stream";
 
 const mockFindFirst = db.user.findFirst as jest.Mock;
 const mockUpdate = db.user.update as jest.Mock;
-const mockBcryptCompare = db.user.update as jest.Mock;
+const mockBcryptCompare = bcrypt.compare as jest.Mock;
 const mockJwtSign = jwt.sign as jest.Mock;
 
 const mockReqRes = (body: object) => {
