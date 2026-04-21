@@ -1,52 +1,15 @@
 import { Request, Response } from "express";
 import handler from "../login";
-
-jest.mock("@/lib/db", () => ({
-  db: {
-    user: {
-      findFirst: jest.fn(),
-      update: jest.fn(),
-    },
-  },
-}));
-
-jest.mock("bcryptjs", () => ({
-  compare: jest.fn(),
-}));
-
-jest.mock("jsonwebtoken", () => ({
-  sign: jest.fn(),
-}));
-
-import { db } from "@/lib/db";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { PassThrough } from "stream";
-
-const mockFindFirst = db.user.findFirst as jest.Mock;
-const mockUpdate = db.user.update as jest.Mock;
-const mockBcryptCompare = bcrypt.compare as jest.Mock;
-const mockJwtSign = jwt.sign as jest.Mock;
-
-const mockReqRes = (body: object) => {
-  const req = { body } as Request;
-  const res = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn().mockReturnThis(),
-  } as unknown as Response;
-  return { req, res };
-};
+import {
+  fakeUser,
+  mockBcryptCompare,
+  mockFindFirst,
+  mockJwtSign,
+  mockReqRes,
+  mockUpdate,
+} from "@/__test__/utils";
 
 describe("POST /login handler", () => {
-  const fakeUser = {
-    id: "user-123",
-    username: "alice",
-    password: "hashed_password",
-    role: "USER",
-    refreshToken: null,
-    refreshTokenCreatedAt: null,
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
     process.env.SECRET_KEY = "test-secret";

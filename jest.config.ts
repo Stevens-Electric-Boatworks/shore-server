@@ -6,6 +6,7 @@ const config: Config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1", // Match your path alias
   },
+  setupFiles: ["<rootDir>/src/__test__/setup.ts"],
 };
 
 export default config;
