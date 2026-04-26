@@ -22,7 +22,7 @@ const AuthMiddleware = async (
 
   if (!token) return res.status(401).json({ error: "Unauthorized." });
 
-  const secret = process.env.SECRET_KEY;
+  const secret = process.env.ACCESS_TOKEN_SECRET;
 
   if (!secret) {
     console.error(

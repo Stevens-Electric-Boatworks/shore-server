@@ -12,7 +12,7 @@ const router = express.Router();
 router.post("/login", LoginHandler);
 router.post("/logout", AuthMiddleware, LogoutHandler);
 router.post("/register", AuthMiddleware, RegisterHandler);
-router.post("/refresh", AuthMiddleware, RefreshHandler);
+router.post("/refresh", RefreshHandler);
 router.get("/me", AuthMiddleware, MeHandler);
 
 export default router;
