@@ -6,6 +6,7 @@ import crypto from "crypto";
 
 const handler = async (req: Request, res: Response) => {
   const { username, password } = req.body;
+  const isDev = process.env.NODE_ENV === "development";
 
   try {
     if (!username || !password)
@@ -61,8 +62,6 @@ const handler = async (req: Request, res: Response) => {
       { expiresIn: "15m" },
     );
 
-    const isDev = process.env.NODE_ENV === "development";
-
     if (!isDev) {
       res.cookie("accessToken", accessToken, {
         httpOnly: true,
@@ -83,10 +82,16 @@ const handler = async (req: Request, res: Response) => {
     // In dev, return tokens in the body so the client can use them manually
     return res.json({
       message: "Login successful.",
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+      },
       accessToken,
       refreshToken: rawRefreshToken,
     });
-  } catch {
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({
       error:
         "An internal server error occurred. Please contact the system administrator.",
