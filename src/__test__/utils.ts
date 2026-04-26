@@ -22,6 +22,7 @@ export const mockReqRes = (body?: object, extras: Partial<Request> = {}) => {
     status: jest.fn().mockReturnThis(),
     json: jest.fn().mockReturnThis(),
     cookie: jest.fn().mockReturnThis(),
+    clearCookie: jest.fn().mockReturnThis(),
   } as unknown as Response;
   return { req, res };
 };

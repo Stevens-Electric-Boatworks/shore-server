@@ -10,6 +10,7 @@ jest.mock("@/lib/db", () => ({
     session: {
       create: jest.fn(),
       findUnique: jest.fn(),
+      update: jest.fn(),
     },
   },
 }));
