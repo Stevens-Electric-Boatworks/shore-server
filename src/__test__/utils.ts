@@ -17,7 +17,7 @@ export const mockRandomUuid = crypto.randomUUID as jest.Mock;
 export const mockRandomBytes = crypto.randomBytes as jest.Mock;
 
 export const mockReqRes = (body?: object, extras: Partial<Request> = {}) => {
-  const req = { body, ...extras } as Request;
+  const req = { body, cookies: {}, ...extras } as Request;
   const res = {
     status: jest.fn().mockReturnThis(),
     json: jest.fn().mockReturnThis(),
