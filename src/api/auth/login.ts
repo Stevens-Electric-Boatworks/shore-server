@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { sanitizeUser } from "@/lib/sanitize";
 
 const handler = async (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -12,11 +13,13 @@ const handler = async (req: Request, res: Response) => {
     if (!username || !password)
       return res.status(400).json({
         error: "Missing credentials. Please provide a username and password.",
+        code: "BAD_INPUT",
       });
 
     const user = await db.user.findFirst({
       where: {
         username,
+        deletedAt: null,
       },
     });
 
@@ -35,6 +38,7 @@ const handler = async (req: Request, res: Response) => {
       return res.status(500).json({
         error:
           "An internal server error occurred. Please contact the system administrator.",
+        code: "INTERNAL_ERROR",
       });
     }
 
@@ -82,11 +86,7 @@ const handler = async (req: Request, res: Response) => {
     // In dev, return tokens in the body so the client can use them manually
     return res.json({
       message: "Login successful.",
-      user: {
-        id: user.id,
-        username: user.username,
-        role: user.role,
-      },
+      user: sanitizeUser(user),
       accessToken,
       refreshToken: rawRefreshToken,
     });

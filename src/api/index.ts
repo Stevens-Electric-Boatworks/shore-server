@@ -5,6 +5,7 @@ import DataRouter from "./data";
 import SessionRouter from "./sessions";
 import AlarmsRouter from "./alarms";
 import AuthRouter from "./auth";
+import AdminRouter from "./admin";
 
 import AuthMiddleware from "@/auth";
 
@@ -20,6 +21,7 @@ router.use("/data", AuthMiddleware, DataRouter);
 router.use("/sessions", AuthMiddleware, SessionRouter);
 router.use("/alarms", AuthMiddleware, AlarmsRouter);
 router.use("/auth", AuthRouter);
+router.use("/admin", AuthMiddleware, AdminRouter);
 
 router.get("/download", AuthMiddleware, DownloadHandler);
 

@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { User } from "./types";
 import { db } from "./lib/db";
 
-const getToken = (req: Request): string | null => {
+export const getToken = (req: Request): string | null => {
   if (req.cookies.accessToken) return req.cookies.accessToken;
   if (process.env.NODE_ENV === "development") {
     const authHeader = req.headers.authorization;
@@ -31,6 +31,7 @@ const AuthMiddleware = async (
     return res.status(500).json({
       error:
         "An internal server error occurred. Please contact the system administrator.",
+      code: "INTERNAL_ERROR",
     });
   }
 
@@ -41,20 +42,38 @@ const AuthMiddleware = async (
       role: "USER" | "ADMIN";
     };
 
+    // Users that are deactivated will not be found
     const session = await db.session.findUnique({
-      where: { id: payload.sessionId },
+      where: {
+        id: payload.sessionId,
+        user: {
+          deletedAt: null,
+        },
+      },
       include: { user: true },
     });
 
     if (!session || session.revokedAt || session.expiresAt < new Date()) {
-      return res.status(401).json({ error: "Invalid session." });
+      return res
+        .status(401)
+        .json({ error: "Invalid session.", code: "INVALID_SESSION" });
+    }
+
+    if (session.user.needsPasswordReset) {
+      if (req.path !== "/reset-password")
+        return res.status(401).json({
+          error: "Please reset your password.",
+          code: "NEEDS_PASSWORD_RESET",
+        });
     }
 
     req.user = session.user;
     req.sessionId = session.id;
     next();
   } catch {
-    return res.status(401).json({ error: "Invalid or expired token." });
+    return res
+      .status(401)
+      .json({ error: "Invalid or expired token.", code: "BAD_ACCESS_TOKEN" });
   }
 };
 

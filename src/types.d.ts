@@ -7,8 +7,10 @@ type User = {
 
   role: "USER" | "ADMIN";
 
-  refreshToken?: string;
-  refreshTokenCreatedAt?: Date;
+  createdAt: Date;
+  deletedAt: Date | null;
+
+  needsPasswordReset: boolean;
 };
 
 declare global {

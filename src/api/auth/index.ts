@@ -4,6 +4,7 @@ import LoginHandler from "./login";
 import LogoutHandler from "./logout";
 import RegisterHandler from "./register";
 import RefreshHandler from "./refresh";
+import ResetPasswordHandler from "./reset-password";
 import MeHandler from "./me";
 import AuthMiddleware from "@/auth";
 
@@ -13,6 +14,7 @@ router.post("/login", LoginHandler);
 router.post("/logout", AuthMiddleware, LogoutHandler);
 router.post("/register", AuthMiddleware, RegisterHandler);
 router.post("/refresh", RefreshHandler);
+router.post("/reset-password", AuthMiddleware, ResetPasswordHandler);
 router.get("/me", AuthMiddleware, MeHandler);
 
 export default router;
